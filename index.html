@@ -1337,7 +1337,7 @@ const LINIE_ANDERE={
     satz:'Ich helfe, wo ich kann, und lasse den Rest dort, wo er hingehört.'},
  6:{reiz:'Das Gerede geht dir auf die Nerven. Du willst drüberstehen und wirkst dadurch schnell abgehoben.',
     tipp:'Bleib eine Spur länger im Gespräch, bevor du dich innerlich verabschiedest. Dein Blick von oben hilft, wenn du ihn freundlich teilst.',
-    satz:'Ich darf Abstand nehmen und trotzdem verbunden bleiben.'}
+    satz:'Ich schau heute erst von oben drauf, bevor ich reagiere. Und ich bleib dabei freundlich.'}
 };
 const PROFIL_ROLLE={
  1:{n:'Forscher',was:'Du brauchst ein sicheres Fundament. Erst wenn du etwas verstanden hast, fühlst du dich wohl.'},
@@ -1362,14 +1362,16 @@ function profilBezug(chart, l){
  const pr=profilTeile(chart); if(!pr) return null;
  const [a,b]=pr, R=PROFIL_ROLLE;
  let art, text;
- if(l===a){ art='Deine eigene Linie';
-  text='Heute steht deine bewusste Profillinie am Himmel. Was du an dir kennst, ist heute lauter. Das fühlt sich vertraut an und kann trotzdem schnell zu viel werden. '+R[a].was; }
- else if(l===b){ art='Deine unbewusste Linie';
-  text='Heute ist deine unbewusste Profillinie dran. Das ist die Seite, die andere an dir sehen und du selbst kaum. Wundere dich nicht, wenn dich heute jemand genau darauf anspricht. '+R[b].was; }
- else if(harmonisch(l)===a||harmonisch(l)===b){ const p=harmonisch(l)===a?a:b; art='Die Partnerlinie deiner Linie '+p;
-  text='Linie '+l+' und Linie '+p+' gehören zusammen. Die eine wirkt nach innen, die andere nach außen. Heute fühlt sich das Thema vertraut an, nur aus der anderen Richtung. Das ist ein guter Tag, um zu sehen, wie deine Linie '+p+' auf andere wirkt.'; }
- else { art='Eine fremde Färbung';
-  text='Linie '+l+' kommt in deinem Profil '+a+'/'+b+' nicht vor. Heute läuft etwas durch dich durch, das nicht dein Standard ist. Probier es aus, aber miss dich nicht daran. Morgen bist du wieder mehr bei dir.'; }
+ if(l===a){ art='Heute ist deine Linie dran';
+  text='Linie '+l+' steckt in deinem Profil. Das fühlt sich heute vertraut an, du bist ganz in deinem Element. Pass nur auf, dass es nicht zu viel wird.'; }
+ else if(l===b){ art='Heute ist deine Linie dran';
+  text='Linie '+l+' steckt in deinem Profil, auf der Seite, die andere an dir sehen. Wundere dich nicht, wenn dich heute jemand genau darauf anspricht.'; }
+ else if(harmonisch(l)===a||harmonisch(l)===b){ const p=harmonisch(l)===a?a:b; art='Heute ist die Partnerlinie deiner Linie '+p+' dran';
+  text='Linie '+l+' und Linie '+p+' gehören zusammen. '+(l>=4
+   ? 'Dein eigenes Thema begegnet dir heute von außen, über andere Menschen. Achte darauf, wo du bei anderen siehst, was du sonst selbst lebst. So merkst du, wie es sich von der anderen Seite anfühlt.'
+   : 'Dein Thema, das du sonst mit anderen lebst, zeigt sich heute in dir drin. Achte darauf, was du heute bei dir selbst spürst, das du sonst eher bei anderen bewegst.'); }
+ else { art='Heute ist eine Linie dran, die nicht in deinem Profil steckt';
+  text='Das kann sich ungewohnt anfühlen. Probier es aus, aber miss dich nicht daran.'; }
  return {art:art, text:text, profil:a+'/'+b, rolle:R[a].n+' und '+R[b].n};
 }
 
@@ -1391,7 +1393,6 @@ function tagesDefinition(gatesSet, defZ, H){
 
 function morgenHTML(iso, H, chart, startMs, istHeute){
  const S=H.Sonne, M=H.Mond, A=ALLTAG[S.gate]||{}, L=linie(S.gate,S.line)||{}, X=LINIE_ANDERE[S.line]||{};
- const mond=istHeute?mondHeute(startMs):[];
  const zeile=(l,t,k)=>`<div class="mzr ${k||''}"><div class="mzl">${l}</div><div>${t}</div></div>`;
  let pers='';
  if(chart){
@@ -1412,7 +1413,6 @@ function morgenHTML(iso, H, chart, startMs, istHeute){
   ${L.neg?zeile('Da kippt es', esc(L.neg)):''}
   ${zeile('Mit anderen', `<b>Was heute reiben kann.</b> ${esc(X.reiz||'')}<br><b>So bleibst du entspannt.</b> ${esc(X.tipp||'')}`)}
   ${pers}
-  ${mond.length?zeile('Der Mond heute', mond.map((m,i)=>`<b>${i===0?'Ab Mitternacht':'Ab '+uhr(m.ms)} Tor ${m.gate}, ${esc(thema(m.gate))}</b><br><span style="font-size:14.5px">${esc(torAlltag(m.gate))}</span>`).join('<br>')+`<br><span style="color:var(--leise);font-size:14px">Jetzt in Tor ${M.gate} Linie ${M.line}. Der Mond färbt die Stimmung im Moment. Wenn du dich am Nachmittag plötzlich anders fühlst als am Vormittag, schau hier nach.</span>`,'nurfort'):''}
   ${zeile('Dein Satz für heute', `<span class="mzsatz">${esc(X.satz||'')}</span>`)}
  </div>`;
 }
